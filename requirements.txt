@@ -1,0 +1,9 @@
+cloudpickle==3.1.2
+Farama-Notifications==0.0.6
+gymnasium==1.3.0
+-e git+https://github.com/giorgiofranceschelli/Gymnasium-Stag-Hunt.git@39b6b5d6c653dd38655288930c660faff9b2fb01#egg=gymnasium_stag_hunt
+numpy==2.5.3
+opencv-python==5.0.0.93
+pettingzoo==1.27.0
+pygame==2.6.1
+typing_extensions==4.16.0

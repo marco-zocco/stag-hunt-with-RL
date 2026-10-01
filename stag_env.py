@@ -18,6 +18,15 @@ external dependency; this module only adapts its interface for our training code
   5. Events       - per-step and per-episode counts of stag catches, maulings and
                     forages, inferred from the reward pair. These are the
                     cooperation metrics we report.
+
+Two rules for code that uses this wrapper:
+  - Never draw random numbers from the GLOBAL `random` / `np.random` (e.g. for
+    epsilon-greedy): that would consume the env's stream and break
+    reproducibility. Use a private generator, e.g. np.random.default_rng(seed).
+  - Observations contain positions only. An agent-ID input, needed when both
+    agents share one network (the env treats A and B differently: on distance
+    ties the stag chases B), is added on the agent side, so that non-learning
+    policies can keep parsing the raw observation.
 """
 
 import random
@@ -51,6 +60,18 @@ class HuntEnv:
         # additionally need forage > 0, otherwise a forage looks like "nothing".
         if forage_reward <= 0:
             raise ValueError("forage_reward must be > 0 for event counting to work")
+
+        # Full configuration, saved alongside every result for reproducibility.
+        self.config = dict(
+            grid_size=list(grid_size),
+            max_timesteps=max_timesteps,
+            forage_quantity=forage_quantity,
+            stag_reward=stag_reward,
+            forage_reward=forage_reward,
+            mauling_punishment=mauling_punishment,
+            stag_follows=stag_follows,
+            run_away_after_maul=run_away_after_maul,
+        )
 
         self.grid_size = tuple(grid_size)
         self.max_timesteps = max_timesteps
@@ -119,6 +140,23 @@ class HuntEnv:
         if truncated:
             info["episode"] = dict(self._episode_events, length=self.max_timesteps)
         return self._process_obs(obs), rewards, terminated, truncated, info
+
+    def render(self):
+        """Print the grid as text: A, B = agents, S = stag, P = plant, * = overlap."""
+        game = self._env.unwrapped.game
+        w, h = self.grid_size
+        grid = [["." for _ in range(w)] for _ in range(h)]
+
+        def put(pos, ch):
+            x, y = int(pos[0]), int(pos[1])
+            grid[y][x] = ch if grid[y][x] == "." else "*"
+
+        for p in game.PLANTS:
+            put(p, "P")
+        put(game.STAG, "S")
+        put(game.A_AGENT, "A")
+        put(game.B_AGENT, "B")
+        print("\n".join(" ".join(row) for row in grid) + "\n")
 
     def close(self):
         self._env.close()
