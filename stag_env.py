@@ -1,33 +1,3 @@
-"""
-Thin wrapper around the Gymnasium-Stag-Hunt "Hunt" environment.
-
-The underlying env (giorgiofranceschelli/Gymnasium-Stag-Hunt) is used as an
-external dependency; this module only adapts its interface for our training code:
-
-  1. Seeding      - the env ignores reset(seed=...). It draws randomness from BOTH
-                    Python's `random` (plant/stag placement) and `numpy.random`
-                    (stag movement), so we seed both globally.
-  2. Observations - uint8 grid coordinates -> float32 in [0, 1] (divided by grid
-                    size - 1). Shape (2, obs_dim): row i is agent i's view; with
-                    flip_obs=True each agent sees its own position first.
-  3. Termination  - the env sets terminated = truncated = (t >= max_timesteps).
-                    Hunt has no terminal state: the episode end is purely a time
-                    limit. We return terminated=False, truncated=True so that
-                    value-based agents keep bootstrapping at the cut-off.
-  4. Rewards      - tuple (r_A, r_B) -> float32 array of shape (2,).
-  5. Events       - per-step and per-episode counts of stag catches, maulings and
-                    forages, inferred from the reward pair. These are the
-                    cooperation metrics we report.
-
-Two rules for code that uses this wrapper:
-  - Never draw random numbers from the GLOBAL `random` / `np.random` (e.g. for
-    epsilon-greedy): that would consume the env's stream and break
-    reproducibility. Use a private generator, e.g. np.random.default_rng(seed).
-  - Observations contain positions only. An agent-ID input, needed when both
-    agents share one network (the env treats A and B differently: on distance
-    ties the stag chases B), is added on the agent side, so that non-learning
-    policies can keep parsing the raw observation.
-"""
 
 import random
 
@@ -38,7 +8,6 @@ import gymnasium_stag_hunt  # noqa: F401  (registers the StagHunt-* env ids)
 
 
 class HuntEnv:
-    """Two-agent Hunt environment with a clean, reproducible interface."""
 
     n_agents = 2
     n_actions = 5  # LEFT=0, DOWN=1, RIGHT=2, UP=3, STAND=4
@@ -55,9 +24,7 @@ class HuntEnv:
         run_away_after_maul=False,
         seed=None,
     ):
-        # Events are read from the reward pair, so the three reward values must be
-        # distinguishable. The env itself enforces stag > forage >= 0 > maul; we
-        # additionally need forage > 0, otherwise a forage looks like "nothing".
+        
         if forage_reward <= 0:
             raise ValueError("forage_reward must be > 0 for event counting to work")
 
@@ -107,7 +74,7 @@ class HuntEnv:
     # ------------------------------------------------------------------ API
 
     def reset(self, seed=None):
-        """Start a new episode. Returns (obs, info), obs of shape (2, obs_dim)."""
+        """Start a new episode. Returns (obs, info: empty dictonary), obs of shape (2, obs_dim)."""
         seed = seed if seed is not None else self._seed_next
         if seed is not None:
             random.seed(seed)
@@ -120,7 +87,7 @@ class HuntEnv:
 
     def step(self, actions):
         """
-        actions: sequence of 2 ints (one per agent).
+        actions: 2 ints (one per agent).
         Returns obs (2, obs_dim), rewards (2,), terminated, truncated, info.
         info["events"] holds this step's events, and on the last step
         info["episode"] holds the totals for the whole episode.
@@ -141,6 +108,7 @@ class HuntEnv:
             info["episode"] = dict(self._episode_events, length=self.max_timesteps)
         return self._process_obs(obs), rewards, terminated, truncated, info
 
+
     def render(self):
         """Print the grid as text: A, B = agents, S = stag, P = plant, * = overlap."""
         game = self._env.unwrapped.game
@@ -158,10 +126,11 @@ class HuntEnv:
         put(game.B_AGENT, "B")
         print("\n".join(" ".join(row) for row in grid) + "\n")
 
+
     def close(self):
         self._env.close()
 
-    # -------------------------------------------------------------- helpers
+    # ----------------------------------------------- helpers
 
     def _process_obs(self, obs):
         return np.asarray(obs, dtype=np.float32) / self._scale
@@ -183,7 +152,7 @@ class HuntEnv:
         return ev
 
 
-# ---------------------------------------------------------------- self-test
+# ------------------------------------------ test
 
 if __name__ == "__main__":
     env = HuntEnv(max_timesteps=100)
