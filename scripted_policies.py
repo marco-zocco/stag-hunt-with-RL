@@ -34,19 +34,19 @@ def _step_towards(pos, target, rng):
 
 
 class RandomPolicy:
-    """Uniformly random action. The 'no strategy at all' baseline."""
+    """Random action (no startegy)"""
 
     name = "random"
 
     def __init__(self, rng):
-        self.rng = rng
+        self.rng = rng  
 
     def act(self, obs_row):
         return int(self.rng.integers(0, 5))
 
 
 class ChaseStagPolicy:
-    """Always walk towards the stag. The naive 'cooperate' strategy."""
+    """Always walk towards the stag (naive 'cooperate' strategy)"""
 
     name = "stag"
 
@@ -59,7 +59,7 @@ class ChaseStagPolicy:
 
 
 class ChasePlantPolicy:
-    """Always walk towards the nearest plant. The safe 'defect' strategy."""
+    """Always walk towards the nearest plant (safe 'defect' strategy)"""
 
     name = "plant"
 
@@ -76,14 +76,13 @@ class ChasePlantPolicy:
 
 class CoordinatedPlanner:
     """
-    Reference JOINT controller: chooses both agents' actions together.
+    Reference JOINT controller: chooses both agents' actions together
 
     It knows the stag's rule (the stag moves first, one cell towards the nearest
     agent, ties -> agent B) and tries all 25 joint actions, scoring each by the
     expected immediate reward over the stag's possible moves, with a small bonus
     for staying close to the stag. It is NOT a learned agent and uses knowledge
-    of the dynamics that a learner does not have: it shows what coordinated
-    hunting can achieve, i.e. a target for the learned agents.
+    of the dynamics
 
     Works from obs[0] (agent A's view), where A's position comes first.
     """
