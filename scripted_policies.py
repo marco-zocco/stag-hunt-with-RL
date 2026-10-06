@@ -3,8 +3,6 @@ Hand-coded policies for the Hunt environment.
 
 CoordinatedPlanner: it is a joint controller
 (one decision for both agents) used as a reference for what coordination achieves
-
-Other policies: they maps ONE agent's observation (already normalized to [0, 1]) to an action
 """
 
 import numpy as np

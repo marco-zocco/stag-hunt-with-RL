@@ -28,7 +28,6 @@ class HuntEnv:
         if forage_reward <= 0:
             raise ValueError("forage_reward must be > 0 for event counting to work")
 
-        # Full configuration, saved alongside every result for reproducibility.
         self.config = dict(
             grid_size=list(grid_size),
             max_timesteps=max_timesteps,
@@ -62,7 +61,7 @@ class HuntEnv:
             disable_env_checker=True,  # silences warnings about the tuple reward
         )
 
-        # Coordinates are laid out as [x, y, x, y, ...] for A, B, stag, plants.
+        # Coordinates are structured as [x, y, x, y, ...] for A, B, stag, plants.
         n_entities = 3 + forage_quantity
         self.obs_dim = 2 * n_entities
         w, h = self.grid_size
@@ -71,7 +70,7 @@ class HuntEnv:
         self._seed_next = seed
         self._episode_events = None
 
-    # ------------------------------------------------------------------ API
+    # ------------------------------------------------------ API
 
     def reset(self, seed=None):
         """Start a new episode. Returns (obs, info: empty dictonary), obs of shape (2, obs_dim)."""
@@ -79,7 +78,7 @@ class HuntEnv:
         if seed is not None:
             random.seed(seed)
             np.random.seed(seed)
-            self._seed_next = None  # seed only once; later episodes continue the stream
+            self._seed_next = None  # seed only once, later episodes continue the stream
 
         obs, _ = self._env.reset()
         self._episode_events = self._zero_events()
@@ -101,7 +100,7 @@ class HuntEnv:
             self._episode_events[k] += v
 
         terminated = False  # no terminal states in Hunt
-        truncated = bool(done)  # time limit reached
+        truncated = bool(done)  # limit reached
 
         info = {"events": events}
         if truncated:
@@ -142,7 +141,7 @@ class HuntEnv:
     def _events_from_rewards(self, r):
         ev = self._zero_events()
         if r[0] == self.stag_reward and r[1] == self.stag_reward:
-            ev["stag"] = 1  # joint catch: the cooperative outcome
+            ev["stag"] = 1  # joint catch
             return ev
         for i, name in enumerate("AB"):
             if r[i] == self.mauling_punishment:
@@ -157,14 +156,14 @@ class HuntEnv:
 if __name__ == "__main__":
     env = HuntEnv(max_timesteps=100)
 
-    # 1) shapes and value range
+    # shapes and value range
     obs, _ = env.reset(seed=0)
     assert obs.shape == (2, env.obs_dim) and obs.dtype == np.float32
     assert 0.0 <= obs.min() and obs.max() <= 1.0
     # flip_obs: agent B sees itself first, so the rows swap A and B positions
     assert np.allclose(obs[0][:2], obs[1][2:4]) and np.allclose(obs[0][2:4], obs[1][:2])
 
-    # 2) reproducibility: same seed + same actions -> identical trajectory
+    # reproducibility: same seed + same actions -> identical trajectory
     def rollout(seed):
         env.reset(seed=seed)
         act_rng = np.random.default_rng(123)  # separate RNG for the actions
@@ -182,7 +181,7 @@ if __name__ == "__main__":
     assert not np.array_equal(t1, t3), "different seeds should differ"
     assert len(t1) == 100
 
-    # 3) event counts must match the rewards collected
+    # event counts must match the rewards collected
     total_r = t1[:, -2:].sum(axis=0)
     expected_A = 5 * ep1["stag"] - 5 * ep1["maul_A"] + 1 * ep1["forage_A"]
     expected_B = 5 * ep1["stag"] - 5 * ep1["maul_B"] + 1 * ep1["forage_B"]

@@ -1,24 +1,9 @@
 """
-Baseline evaluation: how do non-learning controllers perform on Hunt?
-
-For each controller we run N episodes and report, per 100 timesteps (so results
-stay comparable if max_timesteps changes), mean +/- std over episodes of:
+For each controller N episodes and report, per 100 timesteps, mean +/- std over episodes of:
     - stag catches (joint, the cooperative outcome)
     - maulings of A and of B (hunting alone)
     - forages of A and of B (the safe option)
     - return of A and of B
-
-Controllers:
-    random+random, stag+stag, plant+plant, stag+plant  (independent policies:
-        the last three form an empirical payoff matrix of the grid game)
-    planner  (joint controller that knows the stag's rule: a reference for
-        what coordinated hunting can achieve, not a learned result)
-
-Evaluation seeds: episode i is reset with seed (seed + i), so every controller
-faces exactly the same sequence of starting layouts. Learned agents will be
-evaluated on the same seeds, which makes the comparison direct.
-
-Results are printed and saved (with the env config) to results/baselines.json.
 
 Usage:  python baselines.py [--episodes 200] [--max-timesteps 100] [--seed 0]
 """
