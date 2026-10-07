@@ -1,12 +1,8 @@
 """
 Uniform experience replay over single-agent transitions (s, a, r, s', done).
 
-Each environment step produces one transition per agent. In shared mode both go
-into the same buffer (each tagged by its agent-ID input); in separate mode each
-agent has its own buffer.
-
-`done` stores `terminated`, never `truncated`: Hunt has no terminal states, so the
-target always bootstraps, including at the time-limit cut-off.
+In shared mode both agent's transitions go into the same buffer (each tagged by its agent-ID input); 
+in separate mode each agent has its own buffer.
 """
 
 import numpy as np

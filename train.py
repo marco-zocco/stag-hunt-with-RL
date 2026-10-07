@@ -1,28 +1,18 @@
+"""Train two DQN agents on Hunt
+
+Agents learn from a prosocial reward:
+U_i = (1 - alpha_i) * r_i + alpha_i * r_j
+
+Options include hysteretic DQN (--hyst-beta) and NoisyNet exploration
+(--noisy). Hysteresis can be annealed with --hyst-anneal-start/end
+
+Training uses --seed. Evaluation uses fixed seeds and runs every
+--eval-every steps
+
+Outputs in runs/<name>/: config.json, eval_log.csv, final_eval.json,
+and model.pt
 """
-Train two DQN agents on Hunt.
 
-Each agent learns from a prosocial reward (Peysakhovich & Lerer, 2017, Def. 3):
-    U_i = (1 - alpha_i) * r_i + alpha_i * r_j
-    alpha = 0 -> selfish, alpha = 0.5 -> fully prosocial (equal weights).
-alpha only changes what the agents LEARN from; all logged returns and evaluation
-metrics use the env's true rewards.
-
-Protocol:
-  - training randomness comes from --seed (use seeds >= 10000, disjoint from the
-    evaluation seeds 0, 1, 2, ...);
-  - every --eval-every steps: greedy evaluation (epsilon = 0) on --eval-episodes
-    fixed evaluation seeds, appended to eval_log.csv;
-  - at the end: greedy evaluation on --final-eval-episodes seeds (same seeds as
-    baselines.py), saved to final_eval.json.
-
-Outputs in runs/<name>/: config.json, eval_log.csv, final_eval.json, model.pt
-(model.pt is also written at every evaluation, atomically, so a killed job keeps
-its latest weights).
-
-Examples:
-    python train.py --mode shared --alpha 0.5 --mauling-punishment -1   # sanity run
-    python train.py --mode shared --alpha 0.0 --seed 10001               # default rewards
-"""
 
 import argparse
 import csv
@@ -41,6 +31,34 @@ from stag_env import HuntEnv
 
 def linear_schedule(start, end, frac):
     return start + (end - start) * min(max(frac, 0.0), 1.0)
+
+
+def hyst_beta_at(args, step):
+    """Hysteretic beta at this step: constant, or annealed linearly to 1."""
+    if args.hyst_beta >= 1.0 or args.hyst_anneal_start >= 1.0:
+        return args.hyst_beta
+    start, end = args.hyst_anneal_start * args.total_steps, args.hyst_anneal_end * args.total_steps
+    return linear_schedule(args.hyst_beta, 1.0, (step - start) / max(end - start, 1.0))
+
+
+def method_label(a):
+    """
+    Short tag for the learning rule of a run (a: dict of train.py args).
+    Used in run names and by aggregate.py; .get() keeps older runs readable.
+    """
+    label = "dqn"
+    if a.get("hyst_beta", 1.0) < 1.0:
+        label = f"hyst{a['hyst_beta']:g}"
+        if a.get("hyst_anneal_start", 1.0) < 1.0:
+            label += f"-ann{a['hyst_anneal_start']:g}-{a['hyst_anneal_end']:g}"
+    if a.get("noisy", False):
+        noisy = "noisy" if a.get("noise_resample", "step") == "step" else "noisyep"
+        label = noisy if label == "dqn" else f"{label}+{noisy}"
+        if (a.get("eps_start", 0.0), a.get("eps_end", 0.0)) != (0.0, 0.0):
+            label += f"+eps{a['eps_start']:g}-{a['eps_end']:g}"
+    elif (a.get("eps_start", 1.0), a.get("eps_end", 0.05)) != (1.0, 0.05):
+        label += f"+eps{a['eps_start']:g}-{a['eps_end']:g}"
+    return label
 
 
 def atomic_torch_save(obj, path):
@@ -72,10 +90,17 @@ def parse_args(argv=None):
     p.add_argument("--hidden", type=int, nargs="+", default=[64, 64])
     p.add_argument("--target-sync", type=int, default=1_000, help="env steps between target syncs")
     p.add_argument("--learning-starts", type=int, default=1_000)
-    p.add_argument("--eps-start", type=float, default=1.0)
-    p.add_argument("--eps-end", type=float, default=0.05)
+    p.add_argument("--eps-start", type=float, default=None, help="default 1.0 (0.0 with --noisy)")
+    p.add_argument("--eps-end", type=float, default=None, help="default 0.05 (0.0 with --noisy)")
     p.add_argument("--eps-frac", type=float, default=0.5, help="fraction of training to anneal epsilon")
     p.add_argument("--no-double", action="store_true", help="plain DQN target instead of Double DQN")
+    # learning-rule variants
+    p.add_argument("--hyst-beta", type=float, default=1.0, help="loss weight of negative TD errors (1 = off)")
+    p.add_argument("--hyst-anneal-start", type=float, default=1.0, help="fraction of training where beta starts rising to 1 (1 = never)")
+    p.add_argument("--hyst-anneal-end", type=float, default=1.0, help="fraction of training where beta reaches 1")
+    p.add_argument("--noisy", action="store_true", help="NoisyNet layers instead of epsilon-greedy")
+    p.add_argument("--noisy-sigma0", type=float, default=0.5, help="initial noise scale (paper: 0.5)")
+    p.add_argument("--noise-resample", choices=["step", "episode"], default="step", help="how often the acting noise changes")
     # protocol
     p.add_argument("--seed", type=int, default=10_000)
     p.add_argument("--eval-every", type=int, default=10_000)
@@ -87,10 +112,20 @@ def parse_args(argv=None):
 
     args.alpha_a = args.alpha if args.alpha_a is None else args.alpha_a
     args.alpha_b = args.alpha if args.alpha_b is None else args.alpha_b
+    if args.eps_start is None:
+        args.eps_start = 0.0 if args.noisy else 1.0
+    if args.eps_end is None:
+        args.eps_end = 0.0 if args.noisy else 0.05
+    if not 0.0 < args.hyst_beta <= 1.0:
+        p.error("--hyst-beta must be in (0, 1]")
+    if args.hyst_anneal_start < 1.0 and not args.hyst_anneal_start < args.hyst_anneal_end <= 1.0:
+        p.error("need --hyst-anneal-start < --hyst-anneal-end <= 1")
     if args.name is None:
+        method = method_label(vars(args))
         args.name = (
-            f"{args.mode}_a{args.alpha_a:g}-{args.alpha_b:g}"
-            f"_maul{args.mauling_punishment:g}_s{args.seed}"
+            f"{args.mode}"
+            + ("" if method == "dqn" else f"_{method}")  # plain DQN keeps the old run names
+            + f"_a{args.alpha_a:g}-{args.alpha_b:g}_maul{args.mauling_punishment:g}_s{args.seed}"
         )
     return args
 
@@ -124,6 +159,8 @@ def train(args):
         buffer_capacity=args.buffer,
         batch_size=args.batch_size,
         double=not args.no_double,
+        noisy=args.noisy,
+        sigma0=args.noisy_sigma0,
     )
     alphas = np.array([args.alpha_a, args.alpha_b], dtype=np.float32)
 
@@ -131,7 +168,7 @@ def train(args):
         json.dump({"args": vars(args), "env_config": env.config}, f, indent=2)
 
     log_path = os.path.join(run_dir, "eval_log.csv")
-    fields = ["step", "episodes", "epsilon", "loss", "train_return_A", "train_return_B", "minutes"]
+    fields = ["step", "episodes", "epsilon", "hyst_beta", "loss", "train_return_A", "train_return_B", "minutes"]
     fields += [f"{m}_{s}" for m in METRICS for s in ("mean", "std")]
     log_file = open(log_path, "w", newline="")
     writer = csv.DictWriter(log_file, fieldnames=fields)
@@ -145,6 +182,9 @@ def train(args):
 
     for step in range(1, args.total_steps + 1):
         epsilon = linear_schedule(args.eps_start, args.eps_end, step / (args.eps_frac * args.total_steps))
+        beta = hyst_beta_at(args, step)
+        if args.noisy and (args.noise_resample == "step" or step == 1):
+            team.resample_noise()
 
         actions = team.act(obs, epsilon, rng)
         next_obs, r, terminated, truncated, info = env.step(actions)
@@ -160,9 +200,11 @@ def train(args):
             ep_return[:] = 0.0
             episodes += 1
             obs, _ = env.reset()  # continues the seeded random stream
+            if args.noisy and args.noise_resample == "episode":
+                team.resample_noise()
 
         if step >= args.learning_starts:
-            loss = team.update(rng)
+            loss = team.update(rng, neg_weight=beta)
             if loss is not None:
                 recent_losses.append(loss)
         if step % args.target_sync == 0:
@@ -175,6 +217,7 @@ def train(args):
                 "step": step,
                 "episodes": episodes,
                 "epsilon": round(epsilon, 4),
+                "hyst_beta": round(beta, 4),
                 "loss": round(float(np.mean(recent_losses)), 5) if recent_losses else "",
                 "train_return_A": round(float(tr[0]), 2),
                 "train_return_B": round(float(tr[1]), 2),
@@ -186,7 +229,7 @@ def train(args):
             log_file.flush()
             atomic_torch_save({"args": vars(args), "team": team.state_dict()}, os.path.join(run_dir, "model.pt"))
             print(
-                f"step {step:>7} | eps {epsilon:.2f} | loss {row['loss']} | "
+                f"step {step:>7} | eps {epsilon:.2f} | beta {beta:.2f} | loss {row['loss']} | "
                 f"eval: stag {res['stag'][0]:5.2f}  maul A/B {res['maul_A'][0]:5.2f}/{res['maul_B'][0]:5.2f}  "
                 f"forage A/B {res['forage_A'][0]:5.2f}/{res['forage_B'][0]:5.2f}  "
                 f"return A/B {res['return_A'][0]:7.2f}/{res['return_B'][0]:7.2f} | {row['minutes']:.1f} min",

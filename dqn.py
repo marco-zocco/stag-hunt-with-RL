@@ -1,23 +1,15 @@
 """
-Independent DQN learners for the two Hunt agents.
-
 DQNLearner: one Q-network + target network + replay buffer + optimizer.
     - epsilon-greedy acting
-    - Double-DQN target: the online net picks the next action, the target net
-      evaluates it,  y = r + gamma * (1 - done) * Q_target(s', argmax_a Q_online(s', a)).
-      This reduces the overestimation bias of the plain max target.
-    - Huber loss and gradient-norm clipping for stability.
+    - Double-DQN target: the online net -> next action, target net -> evaluates it, 
+        y = r + gamma * (1 - done) * Q_target(s', argmax_a Q_online(s', a)).
+    - Huber loss and gradient-norm clipping
+    - optional hysteretic update
+    - optional NoisyNet exploration
 
 Team: maps the env's two agents onto learners.
-    - shared:   ONE learner for both agents (parameter sharing). A one-hot agent ID
-                is appended to each observation, because the env treats A and B
-                differently (on distance ties the stag chases B). Each agent still
-                acts from its own observation only (decentralized execution).
-    - separate: TWO independent learners, each with its own network and buffer.
-
-Why Q-learning here (and not V + lookahead, as for Peg Solitaire): the next state
-depends on the partner's action and on random stag moves, so successor states
-cannot be computed in advance; Q(s, a) has to be learned directly.
+    - shared: Full parameter sharing. A one-hot agent ID. Decentralized execution
+    - separate: Two independent learners with two networks and buffers
 """
 
 import copy
@@ -42,40 +34,65 @@ class DQNLearner:
         batch_size=64,
         grad_clip=10.0,
         double=True,
+        noisy=False,
+        sigma0=0.5,
     ):
         self.n_actions = n_actions
         self.gamma = gamma
         self.batch_size = batch_size
         self.grad_clip = grad_clip
         self.double = double
+        self.noisy = noisy
 
-        self.online = QNetwork(in_dim, n_actions, hidden)
+        self.online = QNetwork(in_dim, n_actions, hidden, noisy=noisy, sigma0=sigma0)
         self.target = copy.deepcopy(self.online)  # frozen copy, used only for targets
         self.target.requires_grad_(False)
         self.optimizer = torch.optim.Adam(self.online.parameters(), lr=lr)
         self.buffer = ReplayBuffer(buffer_capacity, in_dim)
 
-    # ------------------------------------------------------------- acting
+    # --------------------  acting
 
     @torch.no_grad()
     def greedy(self, x):
-        """x: (k, in_dim) numpy array -> (k,) greedy actions."""
+        """x: (k, in_dim) numpy array -> (k,) greedy actions (noisy nets: mean weights)."""
+        self.online.eval()  # only changes anything for noisy layers
         q = self.online(torch.as_tensor(x, dtype=torch.float32))
+        self.online.train()
         return q.argmax(dim=1).numpy()
 
+    @torch.no_grad()
     def act(self, x, epsilon, rng):
-        actions = self.greedy(x)
+        """Training-time action: argmax of the (noisy, if enabled) Q-values, then epsilon."""
+        if self.noisy:
+            # current acting noise sample; Team.resample_noise() decides how often it changes
+            actions = self.online(torch.as_tensor(x, dtype=torch.float32)).argmax(dim=1).numpy()
+        else:
+            actions = self.greedy(x)
         if epsilon > 0.0:
             explore = rng.random(len(actions)) < epsilon
             actions[explore] = rng.integers(0, self.n_actions, size=int(explore.sum()))
         return actions
 
-    # ----------------------------------------------------------- learning
+    # ------------------- learning
 
-    def update(self, rng):
-        """One gradient step on a uniform minibatch. Returns the loss (or None)."""
+    def resample_noise(self):
+        self.online.reset_noise()
+
+    def update(self, rng, neg_weight=1.0):
+        """
+        One gradient step on a uniform minibatch. Returns the loss (or None).
+        neg_weight: hysteretic beta, the loss weight of transitions with a
+        negative TD error (1.0 = plain DQN).
+        """
         if len(self.buffer) < self.batch_size:
             return None
+        if self.noisy:
+            # fresh, independent noise for the online and target nets in this
+            # update (as in the paper); the acting noise is put back afterwards so
+            # that a per-episode acting sample is not changed by learning
+            acting_noise = self.online.get_noise()
+            self.online.reset_noise()
+            self.target.reset_noise()
         b = self.buffer.sample(self.batch_size, rng)
         obs = torch.as_tensor(b["obs"])
         actions = torch.as_tensor(b["actions"])
@@ -92,11 +109,21 @@ class DQNLearner:
                 next_q = self.target(next_obs).max(dim=1).values
             y = rewards + self.gamma * (1.0 - dones) * next_q
 
-        loss = F.smooth_l1_loss(q, y)  # Huber: robust to the large +5/-5 errors
+        # Huber: robust to the large +5/-5 errors
+        if neg_weight == 1.0:
+            loss = F.smooth_l1_loss(q, y)
+        else:
+            per_sample = F.smooth_l1_loss(q, y, reduction="none")
+            # TD error delta = y - Q: weight 1 if delta >= 0, beta if delta < 0.
+            # The weight is a constant (no gradient flows through it).
+            w = torch.where(y < q.detach(), neg_weight, 1.0)
+            loss = (w * per_sample).mean()
         self.optimizer.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.online.parameters(), self.grad_clip)
         self.optimizer.step()
+        if self.noisy:
+            self.online.set_noise(acting_noise)
         return loss.item()
 
     def sync_target(self):
@@ -147,8 +174,13 @@ class Team:
         for i in range(2):
             self.learner_of(i).buffer.add(x[i], actions[i], rewards[i], nx[i], done)
 
-    def update(self, rng):
-        losses = [l.update(rng) for l in self.learners]
+    def resample_noise(self):
+        """New acting noise sample for every learner (no-op without noisy nets)."""
+        for l in self.learners:
+            l.resample_noise()
+
+    def update(self, rng, neg_weight=1.0):
+        losses = [l.update(rng, neg_weight) for l in self.learners]
         losses = [l for l in losses if l is not None]
         return float(np.mean(losses)) if losses else None
 
