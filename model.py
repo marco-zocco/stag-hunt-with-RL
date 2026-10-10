@@ -5,9 +5,7 @@ Input:  agent's observation normalized, plus a one-hot
         agent ID when both agents share the network.
 Output: Q(s, a) for the 5 actions (LEFT, DOWN, RIGHT, UP, STAND).
 
-With noisy=True every linear layer is a NoisyLinear (Fortunato et al., 2018,
-"Noisy Networks for Exploration"): exploration comes from learned noise on the
-weights instead of epsilon-greedy.
+With noisy=True every linear layer is a NoisyLinear
 """
 
 import math
@@ -19,7 +17,7 @@ import torch.nn.functional as F
 
 class NoisyLinear(nn.Module):
     """
-    Linear layer with factorised Gaussian noise (Fortunato et al., 2018, Sec. 3.2):
+    Linear layer with factorised Gaussian noise:
 
         w = mu_w + sigma_w * eps_w,   eps_w = f(eps_out) f(eps_in)^T,   f(x) = sign(x) sqrt(|x|)
         b = mu_b + sigma_b * eps_b,   eps_b = f(eps_out)

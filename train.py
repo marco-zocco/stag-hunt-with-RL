@@ -1,6 +1,6 @@
 """Train two DQN agents on Hunt
 
-Agents learn from a prosocial reward:
+Prosocial reward:s
 U_i = (1 - alpha_i) * r_i + alpha_i * r_j
 
 Options include hysteretic DQN (--hyst-beta) and NoisyNet exploration

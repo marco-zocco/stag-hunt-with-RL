@@ -73,7 +73,8 @@ class HuntEnv:
     # ------------------------------------------------------ API
 
     def reset(self, seed=None):
-        """Start a new episode. Returns (obs, info: empty dictonary), obs of shape (2, obs_dim)."""
+        """Start a new episode. Returns (obs, info: empty dictonary)"""
+
         seed = seed if seed is not None else self._seed_next
         if seed is not None:
             random.seed(seed)
@@ -86,11 +87,12 @@ class HuntEnv:
 
     def step(self, actions):
         """
-        actions: 2 ints (one per agent).
-        Returns obs (2, obs_dim), rewards (2,), terminated, truncated, info.
+        actions: 2 ints
+        Returns obs (2, obs_dim), rewards (2,), terminated, truncated, info
         info["events"] holds this step's events, and on the last step
         info["episode"] holds the totals for the whole episode.
         """
+
         a = [int(actions[0]), int(actions[1])]
         obs, rewards, done, _, _ = self._env.step(a)
 
@@ -151,9 +153,9 @@ class HuntEnv:
         return ev
 
 
-# ------------------------------------------ test
 
-if __name__ == "__main__":
+
+'''if __name__ == "__main__":
     env = HuntEnv(max_timesteps=100)
 
     # shapes and value range
@@ -190,4 +192,4 @@ if __name__ == "__main__":
     print("obs_dim:", env.obs_dim)
     print("episode (seed 42, random actions):", ep1, "| returns:", total_r)
     print("all checks passed")
-    env.close()
+    env.close()'''
