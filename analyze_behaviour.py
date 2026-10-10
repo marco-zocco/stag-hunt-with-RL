@@ -44,25 +44,35 @@ COOP_THRESHOLD = 8.0  # same threshold as aggregate.py: 8 catches x 5 = 40 = for
 
 # --------------------------------------------------------------------------- loading
 
+def env_kwargs(a):
+    """The HuntEnv arguments a run was trained with (taken from its saved args)."""
+    import inspect
+    sys.path.insert(0, os.getcwd())
+    from stag_env import HuntEnv
+    params = inspect.signature(HuntEnv.__init__).parameters
+    kw = {k: a[k] for k in params if k not in ("self", "seed") and k in a and a[k] is not None}
+    if "grid_size" in kw:
+        g = kw["grid_size"]
+        kw["grid_size"] = tuple(int(x) for x in g) if isinstance(g, (list, tuple)) else (int(g), int(g))
+    return kw
+
+
+def make_env(a):
+    """The environment the run was trained in (grid, rewards, stag_follows, ...)."""
+    from stag_env import HuntEnv
+    return HuntEnv(**env_kwargs(a))
+
+
 def load_controller(model_path):
     sys.path.insert(0, os.getcwd())
     from dqn import Team
 
     ck = torch.load(model_path, map_location="cpu", weights_only=False)
     a = ck["args"]
-    team = Team(a["mode"], 10, hidden=tuple(a["hidden"]), noisy=a.get("noisy", False))
+    obs_dim = make_env(a).obs_dim
+    team = Team(a["mode"], obs_dim, hidden=tuple(a["hidden"]), noisy=a.get("noisy", False))
     team.load_state_dict(ck["team"])
     return team.greedy_controller(), a
-
-
-def make_env(a):
-    """The analysis uses the default environment. Our runs all use the defaults;
-    if you later analyse runs with other rewards / grid sizes, construct HuntEnv
-    with those values here."""
-    sys.path.insert(0, os.getcwd())
-    from stag_env import HuntEnv
-
-    return HuntEnv()
 
 
 def grid_size(a):
@@ -71,13 +81,14 @@ def grid_size(a):
 
 
 def non_default_env(a):
-    defaults = {"grid_size": 5, "stag_reward": 5, "forage_reward": 1,
-                "mauling_punishment": -5, "max_timesteps": 100}
+    defaults = {"grid_size": 5, "stag_reward": 5, "forage_reward": 1, "mauling_punishment": -5,
+                "max_timesteps": 100, "forage_quantity": 2, "stag_follows": True, "run_away_after_maul": False}
     out = {}
     for k, d in defaults.items():
         v = a.get(k, d)
         v = v[0] if isinstance(v, (list, tuple)) else v
-        if v is not None and float(v) != float(d):
+        if v is not None and v != d and not (isinstance(d, (int, float)) and not isinstance(d, bool)
+                                              and float(v) == float(d)):
             out[k] = v
     return out
 
@@ -98,8 +109,11 @@ def final_eval_catches(run_dir):
         x = stack.pop()
         if isinstance(x, dict):
             for k, v in x.items():
-                if ("catch" in k.lower() or k.lower() == "stag") and isinstance(v, (int, float)):
-                    return float(v)
+                if "catch" in k.lower() or k.lower() == "stag":
+                    if isinstance(v, (int, float)):
+                        return float(v)
+                    if isinstance(v, dict) and isinstance(v.get("mean"), (int, float)):
+                        return float(v["mean"])
                 if isinstance(v, dict):
                     stack.append(v)
     return None
@@ -179,7 +193,7 @@ def analyse_run(job):
         "huddle_catch": pct(huddle, catches),
         "wait_catch": pct(wait, catches),
         "pre_dist": pre_dist_sum / catches if catches else float("nan"),
-        "non_default_env": json.dumps(non_default_env(a)) if non_default_env(a) else "",
+        "env": json.dumps(non_default_env(a)) if non_default_env(a) else "default",
     }
 
 
@@ -266,11 +280,6 @@ def main():
         last = r["config"]
         label = f"{r['config']} s{r['seed']}" if r["seed"] else r["config"]
         print(label.ljust(width) + " ".join(fmt(r[k], f) for k, _, f in COLS))
-    if any(r["non_default_env"] for r in rows):
-        print("\nWARNING: some runs used non-default env settings, but were analysed in the default env:")
-        for r in rows:
-            if r["non_default_env"]:
-                print("  ", r["run"], r["non_default_env"])
 
     # per-config summary over cooperative seeds only
     summ = []

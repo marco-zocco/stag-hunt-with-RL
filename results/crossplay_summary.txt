@@ -1,0 +1,61 @@
+CROSS-PLAY over pairs whose two source runs both cooperate in self-play (17 of 30 runs cooperate)
+
+  self-play                    n=  17  catches  25.2 ±  4.1   cooperative 100.0%   meet 100.0%   maul  1.23   forage   0.9
+  cross-play, same config      n=  24  catches   8.9 ±  8.6   cooperative  45.8%   meet  73.6%   maul 46.07   forage   0.6
+  cross-play, different config n= 248  catches   8.8 ±  9.6   cooperative  44.0%   meet  70.4%   maul 41.50   forage   0.7
+  cross-play, all              n= 272  catches   8.8 ±  9.5   cooperative  44.1%   meet  70.7%   maul 41.90   forage   0.7
+
+CROSS-PLAY BY ROLE (cooperative source runs, i != j)   A role x B role
+  A walker + B walker         n= 171  catches   9.3 ±  9.5   cooperative  46.8%   meet  71.8%   maul 37.25   forage   0.7
+  A walker + B waiter         n=  37  catches   5.4 ±  7.9   cooperative  27.0%   meet  61.1%   maul 60.00   forage   0.8
+  A waiter + B walker         n=  53  catches  10.0 ± 10.1   cooperative  49.1%   meet  73.7%   maul 41.49   forage   0.7
+  A waiter + B waiter         n=  11  catches   7.8 ±  9.3   cooperative  36.4%   meet  69.5%   maul 55.33   forage   0.7
+
+CROSS-PLAY BY TRAINING METHOD (cooperative source runs, i != j)   rows: A's method, cols: B's method, mean catches
+                 a0.5-0.5_ dqn+eps0.   hyst0.2     noisy   noisyep
+  a0.5-0.5_maul-         -       0.2       8.0       5.6       3.8
+  dqn+eps0.1-0.0       0.0         -       9.4      12.0      11.4
+  hyst0.2              6.0       8.8       8.3       7.3       7.5
+  noisy                4.7      12.1       9.0       6.3      11.3
+  noisyep              3.8      10.0       9.6       9.7      11.3
+
+CATCH MATRIX (cooperative runs only): row = run providing agent A, column = run providing agent B
+diagonal = self-play
+
+          r1    r2    r3    r4    r5    r6    r7    r8    r9   r10   r11   r12   r13   r14   r15   r16   r17
+    r1 22.6*   0.2   0.4   0.0   0.0  21.7  17.9  22.5   0.0   0.0   0.0   0.0   0.0   0.0  20.9   0.0   2.2
+    r2   0.0 24.1*  14.1  19.1  12.3   0.1   1.7   0.0  24.1   0.0  24.0   0.9  23.5  20.8   0.1   0.0  23.1
+    r3   0.3   1.5 34.0*   1.0  26.8   3.8   1.9   0.7   0.7   1.0   0.8   1.1   0.3   0.8   0.4   1.0   1.0
+    r4   0.0  22.0   9.1 19.7*   2.0   0.1   1.5   0.0  22.7   0.0  22.7   1.4  22.7  22.0   0.1   0.0  22.1
+    r5   0.0  18.7  33.9  17.4 33.8*   9.2   5.6   0.6  18.2  16.6  15.6  17.3  16.9  16.7   0.5  16.6  16.6
+    r6  10.9   0.7  12.6   0.7  17.8 24.9*   8.5  17.5   0.3   7.3   0.5   7.0   0.3  13.6  14.5   7.3   5.0
+    r7  18.9   1.2   3.2   1.1   3.5   5.4 33.3*  17.8   1.5   0.0   1.3   0.2   1.3   0.8  15.7   0.0   1.5
+    r8  18.6   0.3   0.0   0.2   0.0  20.3  17.7 22.8*   0.0   0.0   0.0   0.0   0.0   0.0  20.0   0.0   3.6
+    r9   0.0  23.7   9.4  19.8   8.5   0.0   3.2   0.0 24.0*   0.0  23.5   1.2  22.3   6.9   0.0   0.0  17.3
+   r10   0.0   0.3  11.3   0.2  19.1  22.9   0.3   0.2   0.1 23.6*   7.4  23.7   0.2  23.7   0.1  23.6  22.2
+   r11   0.0  24.0   9.7  20.2  14.3   1.2   1.4   0.1  23.1  20.7 23.8*  20.8  24.0  21.9   0.1  20.7  19.6
+   r12   0.0   0.0  11.6   0.0  18.8  22.1   0.0   0.0   0.0  23.4   4.7 23.5*   0.0  23.4   0.1  23.4  16.4
+   r13   0.2  23.6  13.4  21.9   3.3   0.1   1.4   0.0  23.7   0.0  23.6   3.0 23.9*  23.9   0.1   0.0  23.8
+   r14   0.0  12.5  11.2  14.7  11.4  11.2   0.8   0.1  11.2  14.3  15.9  17.4  11.1 24.0*   0.1  14.3  22.1
+   r15  22.3   0.4   0.3   0.1   0.0  21.2  17.4  22.3   0.5   0.0   0.3   0.0   0.2   0.2 22.7*   0.0   2.3
+   r16   0.0   0.3  11.4   0.2  19.0  22.9   0.3   0.2   0.1  23.6   6.9  23.7   0.2  23.7   0.1 23.6*  21.4
+   r17   0.0  23.1   9.9  19.2  14.3   9.5   1.4   0.2  21.4  23.5  16.6  23.1  18.7  23.6   0.2  23.5 24.8*
+
+legend (self-play catches, role of A / role of B):
+  r1   dqn a0.5 s0               22.6   A waiter  B walker
+  r2   dqn+eps0.1-0.05 a0 s2     24.1   A walker  B walker
+  r3   hyst0.2 a0 s0             34.0   A walker  B walker
+  r4   hyst0.2 a0 s2             19.7   A walker  B walker
+  r5   hyst0.2 a0.5 s0           33.8   A waiter  B walker
+  r6   hyst0.2 a0.5 s1           24.9   A walker  B walker
+  r7   hyst0.2 a0.5 s2           33.3   A walker  B waiter
+  r8   noisy a0 s1               22.8   A walker  B walker
+  r9   noisy a0 s2               24.0   A walker  B walker
+  r10  noisy a0.5 s1             23.6   A waiter  B walker
+  r11  noisy a0.5 s2             23.8   A walker  B walker
+  r12  noisyep a0 s0             23.5   A walker  B walker
+  r13  noisyep a0 s1             23.9   A walker  B walker
+  r14  noisyep a0 s2             24.0   A walker  B walker
+  r15  noisyep a0.5 s0           22.7   A walker  B waiter
+  r16  noisyep a0.5 s1           23.6   A waiter  B waiter
+  r17  noisyep a0.5 s2           24.8   A walker  B walker
