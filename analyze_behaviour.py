@@ -1,17 +1,20 @@
 """
-Behaviour analysis of trained Stag Hunt agents.
+Behaviour analysis of trained Stag Hunt agents: HOW do they cooperate?
 
-For every run folder with a model.pt, plays greedy evaluation episodes and measures:
+For every run folder with a model.pt, plays greedy evaluation episodes
+(no exploration, noise-free weights) and measures:
 
-  catches        
-  maul, forage   
+  catches        joint stag catches per episode (both agents get stag_reward)
+  maul, forage   maulings / plants eaten per episode (A+B; per agent in the csv)
   coloc          % of steps on which A and B stand on the same cell
   dist_AB        mean Manhattan distance between A and B
   meet           % of episodes in which A and B ever share a cell
-  meet_t         mean step at which they first share a cell
+  meet_t         mean step at which they first share a cell (they start 4 cells apart)
   stand_A/B      % of steps on which each agent chooses STAND
+  still_A/B      % of steps on which each agent's position does not change, however it
+                 got there (STAND, walking into a wall, or blocked): its real waiting time
   huddle_catch   % of catches where A and B were ALREADY on the same cell
-                 before the catching step
+                 before the catching step (stag walks into the pair)
   wait_catch     % of catches where both agents chose STAND on the catching step
   pre_dist       mean A-B distance just before a catch (0 = huddle, >0 = converging)
 
@@ -41,7 +44,7 @@ ACTION_NAMES = ["LEFT", "DOWN", "RIGHT", "UP", "STAND"]
 COOP_THRESHOLD = 8.0  # same threshold as aggregate.py: 8 catches x 5 = 40 = foraging return
 
 
-# --------------------------------------------------------- loading
+# --------------------------------------------------------------------------- loading
 
 def env_kwargs(a):
     """The HuntEnv arguments a run was trained with (taken from its saved args)."""
@@ -120,7 +123,7 @@ def final_eval_catches(run_dir):
     return None
 
 
-# ------------------------------------------------------ analysis
+# --------------------------------------------------------------------------- analysis
 
 def analyse_run(job):
     run_dir, episodes, seed0 = job
@@ -137,6 +140,7 @@ def analyse_run(job):
     maul = np.zeros(2)
     forage = np.zeros(2)
     stand = np.zeros(2)
+    still = np.zeros(2)
     dist_sum = pre_dist_sum = 0.0
     meet_eps, meet_ts = 0, []
 
@@ -165,7 +169,9 @@ def analyse_run(job):
             maul += r == maul_r
             forage += r == forage_r
 
+            A_prev, B_prev = A, B
             A, B, _ = decode(obs, g)
+            still += [bool((A == A_prev).all()), bool((B == B_prev).all())]
             together = bool((A == B).all())
             coloc += together
             dist_sum += int(np.abs(A - B).sum())
@@ -191,6 +197,7 @@ def analyse_run(job):
         "meet": pct(meet_eps, episodes),
         "meet_t": float(np.mean(meet_ts)) if meet_ts else float("nan"),
         "stand_A": pct(stand[0], steps), "stand_B": pct(stand[1], steps),
+        "still_A": pct(still[0], steps), "still_B": pct(still[1], steps),
         "huddle_catch": pct(huddle, catches),
         "wait_catch": pct(wait, catches),
         "pre_dist": pre_dist_sum / catches if catches else float("nan"),
@@ -228,13 +235,14 @@ def show(run_dir, steps, seed):
         print(f"  -> A {ACTION_NAMES[act[0]]}, B {ACTION_NAMES[act[1]]}   rewards A/B: {np.asarray(r).tolist()}\n")
 
 
-# ----------------------------------------------------- main
+# --------------------------------------------------------------------------- main
 
 COLS = [("catches", "catch", "{:6.1f}"), ("final_eval_catches", "eval", "{:5.1f}"),
         ("maul", "maul", "{:5.2f}"), ("forage", "forage", "{:6.2f}"),
         ("coloc", "coloc%", "{:6.0f}"), ("dist_AB", "dAB", "{:5.2f}"),
         ("meet", "meet%", "{:5.0f}"), ("meet_t", "meet_t", "{:6.1f}"),
         ("stand_A", "standA%", "{:7.0f}"), ("stand_B", "standB%", "{:7.0f}"),
+        ("still_A", "stillA%", "{:7.0f}"), ("still_B", "stillB%", "{:7.0f}"),
         ("huddle_catch", "huddle%", "{:7.0f}"), ("wait_catch", "wait%", "{:5.0f}"),
         ("pre_dist", "preD", "{:5.2f}")]
 
