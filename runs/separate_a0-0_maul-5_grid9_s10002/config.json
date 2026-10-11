@@ -1,0 +1,59 @@
+{
+  "args": {
+    "mode": "separate",
+    "alpha": 0.0,
+    "alpha_a": 0.0,
+    "alpha_b": 0.0,
+    "grid_size": [
+      9,
+      9
+    ],
+    "max_timesteps": 100,
+    "stag_reward": 5,
+    "forage_reward": 1,
+    "mauling_punishment": -5.0,
+    "run_away_after_maul": false,
+    "no_stag_follows": false,
+    "total_steps": 300000,
+    "gamma": 0.95,
+    "lr": 0.0005,
+    "batch_size": 64,
+    "buffer": 50000,
+    "hidden": [
+      64,
+      64
+    ],
+    "target_sync": 1000,
+    "learning_starts": 1000,
+    "eps_start": 1.0,
+    "eps_end": 0.05,
+    "eps_frac": 0.5,
+    "no_double": false,
+    "hyst_beta": 1.0,
+    "hyst_anneal_start": 1.0,
+    "hyst_anneal_end": 1.0,
+    "noisy": false,
+    "noisy_sigma0": 0.5,
+    "noise_resample": "step",
+    "seed": 10002,
+    "eval_every": 10000,
+    "eval_episodes": 50,
+    "final_eval_episodes": 200,
+    "out": "runs",
+    "name": "separate_a0-0_maul-5_grid9_s10002",
+    "stag_follows": true
+  },
+  "env_config": {
+    "grid_size": [
+      9,
+      9
+    ],
+    "max_timesteps": 100,
+    "forage_quantity": 2,
+    "stag_reward": 5,
+    "forage_reward": 1,
+    "mauling_punishment": -5.0,
+    "stag_follows": true,
+    "run_away_after_maul": false
+  }
+}
