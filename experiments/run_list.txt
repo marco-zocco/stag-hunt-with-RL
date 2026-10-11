@@ -1,0 +1,201 @@
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --noisy
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --noisy
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --noisy
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --eps-start 0.1
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --eps-start 0.1
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --eps-start 0.1
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --eps-start 0.1
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --eps-start 0.1
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --eps-start 0.1
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --hyst-beta 0.2
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --hyst-beta 0.2
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --hyst-beta 0.2
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --hyst-beta 0.2
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --hyst-beta 0.2
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --hyst-beta 0.2
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --noisy
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --noisy
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --noisy
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --noisy
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --noisy
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --noisy
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --noisy --noise-resample episode
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --eps-start 0.1
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --eps-start 0.1
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --eps-start 0.1
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate --eps-start 0.1
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate --eps-start 0.1
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate --eps-start 0.1
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10000 --out runs --mode separate
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10001 --out runs --mode separate
+python train.py --mode shared --alpha 0.5 --mauling-punishment -5.0 --seed 10002 --out runs --mode separate
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10000 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10001 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10002 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10003 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10004 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10000 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10001 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10002 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10003 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10004 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10000 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10001 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10002 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10003 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10004 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10000 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10001 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10002 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10003 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10004 --out runs
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10000 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10001 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10002 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10003 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10004 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10000 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10001 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10002 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10003 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10004 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10000 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10001 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10002 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10003 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10004 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10000 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10001 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10002 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10003 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10004 --out runs --hyst-beta 0.2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10000 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10001 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10002 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10003 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -1.0 --seed 10004 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10000 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10001 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10002 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10003 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -2.0 --seed 10004 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10000 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10001 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10002 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10003 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -10.0 --seed 10004 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10000 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10001 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10002 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10003 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -20.0 --seed 10004 --out runs --noisy --noise-resample episode
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --grid-size 7 7
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --grid-size 9 9
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --forage-reward 2
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --forage-reward 3

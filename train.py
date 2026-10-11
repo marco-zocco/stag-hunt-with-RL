@@ -1,10 +1,6 @@
-"""Train two DQN agents on Hunt
-
+"""
 Prosocial reward:s
 U_i = (1 - alpha_i) * r_i + alpha_i * r_j
-
-Options include hysteretic DQN (--hyst-beta) and NoisyNet exploration
-(--noisy). Hysteresis can be annealed with --hyst-anneal-start/end
 
 Training uses --seed. Evaluation uses fixed seeds and runs every
 --eval-every steps
@@ -61,6 +57,29 @@ def method_label(a):
     return label
 
 
+def env_label(a):
+    """
+    Suffix for run names listing the environment settings that differ from the
+    defaults (the mauling penalty is always in the name already). Empty for the
+    default environment, so runs made before this option existed keep their names.
+    """
+    out = ""
+    grid = list(a.get("grid_size", [5, 5]))
+    if grid != [5, 5]:
+        out += f"_grid{grid[0]}" if grid[0] == grid[1] else f"_grid{grid[0]}x{grid[1]}"
+    if a.get("max_timesteps", 100) != 100:
+        out += f"_T{a['max_timesteps']}"
+    if a.get("stag_reward", 5) != 5:
+        out += f"_stag{a['stag_reward']:g}"
+    if a.get("forage_reward", 1) != 1:
+        out += f"_forage{a['forage_reward']:g}"
+    if a.get("run_away_after_maul", False):
+        out += "_runaway"
+    if not a.get("stag_follows", True):
+        out += "_nofollow"
+    return out
+
+
 def atomic_torch_save(obj, path):
     tmp = path + ".tmp"
     torch.save(obj, tmp)
@@ -81,6 +100,8 @@ def parse_args(argv=None):
     p.add_argument("--forage-reward", type=float, default=1)
     p.add_argument("--mauling-punishment", type=float, default=-5)
     p.add_argument("--run-away-after-maul", action="store_true")
+    p.add_argument("--no-stag-follows", action="store_true",
+                   help="the stag moves randomly instead of walking towards the nearest agent")
     # DQN
     p.add_argument("--total-steps", type=int, default=300_000)
     p.add_argument("--gamma", type=float, default=0.95)
@@ -110,6 +131,7 @@ def parse_args(argv=None):
     p.add_argument("--name", default=None, help="run name (default: built from the config)")
     args = p.parse_args(argv)
 
+    args.stag_follows = not args.no_stag_follows  # stored under the HuntEnv argument name
     args.alpha_a = args.alpha if args.alpha_a is None else args.alpha_a
     args.alpha_b = args.alpha if args.alpha_b is None else args.alpha_b
     if args.eps_start is None:
@@ -125,7 +147,9 @@ def parse_args(argv=None):
         args.name = (
             f"{args.mode}"
             + ("" if method == "dqn" else f"_{method}")  # plain DQN keeps the old run names
-            + f"_a{args.alpha_a:g}-{args.alpha_b:g}_maul{args.mauling_punishment:g}_s{args.seed}"
+            + f"_a{args.alpha_a:g}-{args.alpha_b:g}_maul{args.mauling_punishment:g}"
+            + env_label(vars(args))  # empty for the default environment: old run names unchanged
+            + f"_s{args.seed}"
         )
     return args
 
@@ -146,6 +170,7 @@ def train(args):
         forage_reward=args.forage_reward,
         mauling_punishment=args.mauling_punishment,
         run_away_after_maul=args.run_away_after_maul,
+        stag_follows=args.stag_follows,
     )
     env = HuntEnv(**env_kwargs)
     eval_env = HuntEnv(**env_kwargs)  # separate instance: evaluation never touches the training episode

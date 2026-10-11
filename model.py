@@ -1,5 +1,5 @@
 """
-Q-network: a small MLP mapping one agent's input vector to one Q-value per action.
+Q-network
 
 Input:  agent's observation normalized, plus a one-hot
         agent ID when both agents share the network.
@@ -22,14 +22,10 @@ class NoisyLinear(nn.Module):
         w = mu_w + sigma_w * eps_w,   eps_w = f(eps_out) f(eps_in)^T,   f(x) = sign(x) sqrt(|x|)
         b = mu_b + sigma_b * eps_b,   eps_b = f(eps_out)
 
-    mu and sigma are learned by gradient descent like ordinary weights, so the
-    network itself learns how much to explore (sigma can shrink where it has
-    learned enough). Factorised noise needs only in + out random numbers per
-    sample instead of in * out.
+    mu and sigma are learned by gradient descent like ordinary weights
 
     In train mode the layer uses the current noise sample (reset_noise() draws a
-    new one); in eval mode it uses the mean weights only, which is the greedy
-    policy we evaluate.
+    new one); in eval mode it uses the mean weights only
     """
 
     def __init__(self, in_features, out_features, sigma0=0.5):

@@ -1,18 +1,17 @@
 """
-Behaviour analysis of trained Stag Hunt agents: HOW do they cooperate?
+Behaviour analysis of trained Stag Hunt agents.
 
-For every run folder with a model.pt, plays greedy evaluation episodes
-(no exploration, noise-free weights) and measures:
+For every run folder with a model.pt, plays greedy evaluation episodes and measures:
 
-  catches        joint stag catches per episode (both agents get stag_reward)
-  maul, forage   maulings / plants eaten per episode (A+B; per agent in the csv)
+  catches        
+  maul, forage   
   coloc          % of steps on which A and B stand on the same cell
   dist_AB        mean Manhattan distance between A and B
   meet           % of episodes in which A and B ever share a cell
-  meet_t         mean step at which they first share a cell (they start 4 cells apart)
+  meet_t         mean step at which they first share a cell
   stand_A/B      % of steps on which each agent chooses STAND
   huddle_catch   % of catches where A and B were ALREADY on the same cell
-                 before the catching step (stag walks into the pair)
+                 before the catching step
   wait_catch     % of catches where both agents chose STAND on the catching step
   pre_dist       mean A-B distance just before a catch (0 = huddle, >0 = converging)
 
@@ -42,7 +41,7 @@ ACTION_NAMES = ["LEFT", "DOWN", "RIGHT", "UP", "STAND"]
 COOP_THRESHOLD = 8.0  # same threshold as aggregate.py: 8 catches x 5 = 40 = foraging return
 
 
-# --------------------------------------------------------------------------- loading
+# --------------------------------------------------------- loading
 
 def env_kwargs(a):
     """The HuntEnv arguments a run was trained with (taken from its saved args)."""
@@ -114,12 +113,14 @@ def final_eval_catches(run_dir):
                         return float(v)
                     if isinstance(v, dict) and isinstance(v.get("mean"), (int, float)):
                         return float(v["mean"])
+                    if isinstance(v, (list, tuple)) and v and isinstance(v[0], (int, float)):
+                        return float(v[0])  # train.py saves [mean, std]
                 if isinstance(v, dict):
                     stack.append(v)
     return None
 
 
-# --------------------------------------------------------------------------- analysis
+# ------------------------------------------------------ analysis
 
 def analyse_run(job):
     run_dir, episodes, seed0 = job
@@ -227,7 +228,7 @@ def show(run_dir, steps, seed):
         print(f"  -> A {ACTION_NAMES[act[0]]}, B {ACTION_NAMES[act[1]]}   rewards A/B: {np.asarray(r).tolist()}\n")
 
 
-# --------------------------------------------------------------------------- main
+# ----------------------------------------------------- main
 
 COLS = [("catches", "catch", "{:6.1f}"), ("final_eval_catches", "eval", "{:5.1f}"),
         ("maul", "maul", "{:5.2f}"), ("forage", "forage", "{:6.2f}"),
