@@ -1,12 +1,10 @@
 # Stag Hunt with RL
 
 Two independently learning DQN agents in the *Hunt* game of [Gymnasium-Stag-Hunt](https://github.com/giorgiofranceschelli/Gymnasium-Stag-Hunt).
-Course project for *Autonomous and Adaptive Systems* (University of Bologna, 2025/26).
 
 The study asks whether two selfish agents can learn to hunt the stag together at the environment's default rewards,
 and under which conditions this cooperation survives (punishment and temptation size, grid size, a randomly moving
-stag, unseen partners). Plain DQN almost never cooperates; hysteretic updates and NoisyNet exploration make
-cooperation emerge reliably, also with fully separate networks. Full results and discussion are in the report;
+stag, unseen partners). Full results and discussion are in the report;
 the numbers behind them are in `results/`.
 
 ## Environment
@@ -31,8 +29,7 @@ The default parameters are listed below; all of them can be changed with `train.
 - **Prosocial reward**: `--alpha` (agent i learns from (1 − α)·r_i + α·r_j; α = 0 is selfish).
 - **Hysteretic DQN**: `--hyst-beta 0.2` (negative TD errors weighted by β < 1).
 - **NoisyNet exploration**: `--noisy`, with `--noise-resample step` or `episode`.
-- **Evaluation**: greedy policy on 200 fixed evaluation seeds at the end of training.
-
+- **Evaluation**: greedy policy on 200 evaluation episodes of 100 steps, with fixed seeds 0–199, at the end of training.
 ## Repository
 
 | file | purpose |
