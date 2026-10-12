@@ -72,6 +72,8 @@ def main():
         cfg = f"{r['mode']} {r['method']} a={r['alpha_A']:g}/{r['alpha_B']:g} maul={r['maul']:g}"
         if r["env"] != "default":
             cfg += " " + r["env"].replace("_", " ")
+        if r["steps"] != 300_000:
+            cfg += f" {r['steps'] // 1000}k-steps"
         print(
             f"{cfg:<58}{r['n_seeds']:>6}{r['coop_seeds']:>6}"
             f"{r['stag_mean']:>9.2f} ±{r['stag_std']:>5.2f}"

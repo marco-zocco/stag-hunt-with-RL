@@ -1,6 +1,10 @@
-"""
+"""Train two DQN agents on Hunt
+
 Prosocial reward:s
 U_i = (1 - alpha_i) * r_i + alpha_i * r_j
+
+Options include hysteretic DQN (--hyst-beta) and NoisyNet exploration
+(--noisy). Hysteresis can be annealed with --hyst-anneal-start/end
 
 Training uses --seed. Evaluation uses fixed seeds and runs every
 --eval-every steps
@@ -149,6 +153,7 @@ def parse_args(argv=None):
             + ("" if method == "dqn" else f"_{method}")  # plain DQN keeps the old run names
             + f"_a{args.alpha_a:g}-{args.alpha_b:g}_maul{args.mauling_punishment:g}"
             + env_label(vars(args))  # empty for the default environment: old run names unchanged
+            + ("" if args.total_steps == 300_000 else f"_steps{args.total_steps // 1000}k")
             + f"_s{args.seed}"
         )
     return args
