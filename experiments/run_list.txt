@@ -199,3 +199,63 @@ python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 100
 python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --forage-reward 3
 python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --forage-reward 3
 python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --forage-reward 3
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --no-stag-follows --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --noisy --noise-resample episode --no-stag-follows
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --total-steps 3000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.1 --total-steps 1000000
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode separate --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10000 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25

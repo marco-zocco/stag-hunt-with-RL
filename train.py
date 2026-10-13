@@ -58,6 +58,9 @@ def method_label(a):
             label += f"+eps{a['eps_start']:g}-{a['eps_end']:g}"
     elif (a.get("eps_start", 1.0), a.get("eps_end", 0.05)) != (1.0, 0.05):
         label += f"+eps{a['eps_start']:g}-{a['eps_end']:g}"
+    uses_eps = not a.get("noisy", False) or (a.get("eps_start", 0.0), a.get("eps_end", 0.0)) != (0.0, 0.0)
+    if uses_eps and a.get("eps_frac", 0.5) != 0.5:
+        label += f"+epsfrac{a['eps_frac']:g}"  # epsilon reaches its minimum after this fraction of training
     return label
 
 
