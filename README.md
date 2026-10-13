@@ -17,7 +17,7 @@ The default parameters are listed below; all of them can be changed with `train.
 | setting | default |
 |---|---|
 | grid | 5×5, agents start in the two top corners |
-| episode | 100 steps (no terminal states) |
+| episode | 100 steps, truncated (the environment's own default is 1000); no terminal states |
 | rewards | joint catch +5 each, hunting alone −5 (mauling), plant +1 |
 | stag | moves one cell towards the nearest agent every step |
 | observation | (x, y) of A, B, stag and 2 plants, normalised to [0, 1]; agent B sees itself first |
@@ -93,8 +93,8 @@ python emergence.py
 
 ## Reproducing
 
-Every run in `runs/` is listed in `experiments/run_list.txt`. Training is deterministic given the seed
-(same code and library versions give identical results). The full set was run on Google Colab with
+Every run in `runs/` is listed in `experiments/run_list.txt`. A seed reproduces a run exactly only on the same machine
+and library build; on other hardware single runs can differ, while the counts of hunting runs are stable. The full set was run on Google Colab with
 `colab/staghunt_colab.ipynb`, one run per CPU core; the networks are small MLPs, so no GPU is used.
 `aggregate.py`, `baselines.py`, `analyze_behaviour.py`, `crossplay.py` and `emergence.py` regenerate everything in `results/`.
 
