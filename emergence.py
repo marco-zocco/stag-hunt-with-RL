@@ -1,10 +1,7 @@
 """
-When does hunting emerge in the random-stag runs (stag_follows=False)?
-
 For every hysteretic random-stag run, finds the first mid-training evaluation
 with more than 8 catches per 100 steps (same threshold as aggregate.py) and
 compares it with the step at which epsilon reaches its minimum
-(eps_frac * total_steps). Resolution = --eval-every of the run (10k steps).
 
 Usage (from the repo root):
   python emergence.py                      # default: runs/*hyst0.2*nofollow*

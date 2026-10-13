@@ -1,32 +1,3 @@
-"""
-Behaviour analysis of trained Stag Hunt agents: HOW do they cooperate?
-
-For every run folder with a model.pt, plays greedy evaluation episodes
-(no exploration, noise-free weights) and measures:
-
-  catches        joint stag catches per episode (both agents get stag_reward)
-  maul, forage   maulings / plants eaten per episode (A+B; per agent in the csv)
-  coloc          % of steps on which A and B stand on the same cell
-  dist_AB        mean Manhattan distance between A and B
-  meet           % of episodes in which A and B ever share a cell
-  meet_t         mean step at which they first share a cell (they start 4 cells apart)
-  stand_A/B      % of steps on which each agent chooses STAND
-  still_A/B      % of steps on which each agent's position does not change, however it
-                 got there (STAND, walking into a wall, or blocked): its real waiting time
-  huddle_catch   % of catches where A and B were ALREADY on the same cell
-                 before the catching step (stag walks into the pair)
-  wait_catch     % of catches where both agents chose STAND on the catching step
-  pre_dist       mean A-B distance just before a catch (0 = huddle, >0 = converging)
-
-Usage (from the repo root):
-  python analyze_behaviour.py                        # all runs in runs/
-  python analyze_behaviour.py --runs runs/shared_hyst*  --episodes 200
-  python analyze_behaviour.py --show runs/<one_run>  # ASCII replay of one episode
-
-Writes results/behaviour_runs.csv (one row per run) and
-results/behaviour_summary.csv (per configuration, cooperative seeds only).
-"""
-
 import argparse
 import csv
 import glob

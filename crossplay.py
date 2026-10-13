@@ -9,9 +9,6 @@ Usage (from the repo root):
   python crossplay.py --episodes 200
   python crossplay.py --summary-only        # rewrite the summary from an existing crossplay_pairs.csv
 
-Results in results/ (default environment, 30 runs = seeds 10000-10002 of the default-reward sweep):
-  python crossplay.py --episodes 200 --filter '_maul-5_s1000[0-2]$'
-
 Writes results/crossplay_pairs.csv (one row per pair) and results/crossplay_summary.txt.
 """
 
@@ -24,7 +21,7 @@ import json
 import os
 import re
 import sys
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout  
 from multiprocessing import Pool
 
 import numpy as np
@@ -35,7 +32,7 @@ COOP = 8.0      # same threshold as aggregate.py (8 catches x 5 = 40 = foraging 
 WAITER = 40.0   # % STAND in self-play above which an agent counts as a "waiter"
 
 
-# --------------------------------------------------------------------------- loading
+
 
 def env_kwargs(a):
     """The HuntEnv arguments a run was trained with (taken from its saved args)."""
@@ -68,7 +65,9 @@ def load_pair(run_dir):
     return agents[0], agents[1], a
 
 
-# ------------------------------------------- playing
+
+
+
 
 RUNS = []      # filled in every worker by _init
 AGENTS = {}

@@ -1,7 +1,6 @@
 """
 Controllers:
-    random+random, stag+stag, plant+plant, stag+plant  (independent policies:
-        the last three form an empirical payoff matrix of the grid game)
+    random+random, stag+stag, plant+plant, stag+plant
     planner  (joint controller that knows the stag's rule: a reference for
         what coordinated hunting can achieve, not a learned result)
 

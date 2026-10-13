@@ -68,7 +68,7 @@ def env_label(a):
     """
     Suffix for run names listing the environment settings that differ from the
     defaults (the mauling penalty is always in the name already). Empty for the
-    default environment, so runs made before this option existed keep their names.
+    default environment
     """
     out = ""
     grid = list(a.get("grid_size", [5, 5]))
