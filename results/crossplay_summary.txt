@@ -12,8 +12,8 @@ CROSS-PLAY BY ROLE (cooperative source runs, i != j)   A role x B role
   A waiter + B waiter         n=  11  catches   7.8 ±  9.3   cooperative  36.4%   meet  69.5%   maul 55.33   forage   0.7
 
 CROSS-PLAY BY TRAINING METHOD (cooperative source runs, i != j)   rows: A's method, cols: B's method, mean catches
-                 a0.5-0.5_ dqn+eps0.   hyst0.2     noisy   noisyep
-  a0.5-0.5_maul-         -       0.2       8.0       5.6       3.8
+                       dqn dqn+eps0.   hyst0.2     noisy   noisyep
+  dqn                    -       0.2       8.0       5.6       3.8
   dqn+eps0.1-0.0       0.0         -       9.4      12.0      11.4
   hyst0.2              6.0       8.8       8.3       7.3       7.5
   noisy                4.7      12.1       9.0       6.3      11.3
