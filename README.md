@@ -45,6 +45,7 @@ The default parameters are listed below; all of them can be changed with `train.
 | `scripted_policies.py`, `baselines.py` | scripted references (random, always stag, always plant, joint planner) |
 | `analyze_behaviour.py` | how trained agents behave (meeting, co-location, waiting, catch configuration), ASCII replays |
 | `crossplay.py` | pairs agents from different separate-network runs |
+| `emergence.py` | first step with hunting in the random-stag runs, vs. when ε reaches its minimum |
 | `colab/staghunt_colab.ipynb` | notebook used to run all experiments on Google Colab |
 | `experiments/run_list.txt` | the exact command of every run in `runs/` |
 | `runs/` | one folder per run: `config.json`, `eval_log.csv`, `final_eval.json`, `model.pt` |
@@ -67,6 +68,9 @@ pip install -r requirements.txt
 pip install -e ../Gymnasium-Stag-Hunt
 ```
 
+The results were produced with Gymnasium-Stag-Hunt at commit `39b6b5d`.
+CPU-only PyTorch is enough: `pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu`.
+
 ## Usage
 
 ```
@@ -83,7 +87,8 @@ python aggregate.py
 python baselines.py                      # also: --no-stag-follows, --grid-size 9 9, ...
 python analyze_behaviour.py --episodes 200
 python analyze_behaviour.py --show runs/<run_name> --show-steps 20
-python crossplay.py --episodes 200
+python crossplay.py --episodes 200 --filter '_maul-5_s1000[0-2]$'   # the 30 default-environment runs in results/
+python emergence.py
 ```
 
 ## Reproducing
@@ -91,7 +96,7 @@ python crossplay.py --episodes 200
 Every run in `runs/` is listed in `experiments/run_list.txt`. Training is deterministic given the seed
 (same code and library versions give identical results). The full set was run on Google Colab with
 `colab/staghunt_colab.ipynb`, one run per CPU core; the networks are small MLPs, so no GPU is used.
-`aggregate.py`, `baselines.py`, `analyze_behaviour.py` and `crossplay.py` regenerate everything in `results/`.
+`aggregate.py`, `baselines.py`, `analyze_behaviour.py`, `crossplay.py` and `emergence.py` regenerate everything in `results/`.
 
 ## References
 

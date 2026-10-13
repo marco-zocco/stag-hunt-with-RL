@@ -7,6 +7,10 @@ Usage (from the repo root):
   python crossplay.py                       # all separate-network runs in runs/
   python crossplay.py --filter noisyep      # only runs whose name matches a regex
   python crossplay.py --episodes 200
+  python crossplay.py --summary-only        # rewrite the summary from an existing crossplay_pairs.csv
+
+Results in results/ (default environment, 30 runs = seeds 10000-10002 of the default-reward sweep):
+  python crossplay.py --episodes 200 --filter '_maul-5_s1000[0-2]$'
 
 Writes results/crossplay_pairs.csv (one row per pair) and results/crossplay_summary.txt.
 """
@@ -135,6 +139,79 @@ def short(name):
     return f"{method} a{m.group(2).rstrip('0').rstrip('.') or '0'} s{m.group(3)}"
 
 
+def method_of(name):
+    """separate_hyst0.2_a0-0_maul-5_s10002 -> hyst0.2;  separate_a0.5-0.5_maul-5_s10000 (plain DQN) -> dqn"""
+    m = re.match(r"^(?:separate|shared)_(.*?)_?a[\d.]+-[\d.]+_maul", name)
+    return (m.group(1) if m else name) or "dqn"
+
+
+def write_summary(rows, out_dir):
+    """Summary tables of crossplay_pairs.csv rows -> printed and saved as crossplay_summary.txt."""
+    names = list(dict.fromkeys(r["A_from"] for r in rows))   # runs in the order they were played
+    index = {n: k for k, n in enumerate(names)}
+    selfp = {index[r["A_from"]]: r for r in rows if r["kind"] == "self"}
+    coop_run = {i: r["A_selfplay_coop"] for i, r in selfp.items()}
+    role_A = {i: r["A_role"] for i, r in selfp.items()}
+    role_B = {i: r["B_role"] for i, r in selfp.items()}
+    cell = {(index[r["A_from"]], index[r["B_from"]]): r["catches"] for r in rows}
+    n_runs = len(names)
+
+    out = io.StringIO()
+    def p(*a): print(*a, file=out)
+
+    def stats(sel):
+        if not sel:
+            return "n=   0"
+        c = np.array([r["catches"] for r in sel])
+        return (f"n={len(sel):4d}  catches {c.mean():5.1f} ± {c.std():4.1f}   cooperative {100*np.mean(c > COOP):5.1f}%"
+                f"   meet {np.mean([r['meet'] for r in sel]):5.1f}%   maul {np.mean([r['maul'] for r in sel]):5.2f}"
+                f"   forage {np.mean([r['forage'] for r in sel]):5.1f}")
+
+    both = [r for r in rows if r["A_selfplay_coop"] and r["B_selfplay_coop"]]
+    p(f"CROSS-PLAY over pairs whose two source runs both cooperate in self-play "
+      f"({sum(coop_run.values())} of {n_runs} runs cooperate)\n")
+    p("  self-play                    " + stats([r for r in both if r["kind"] == "self"]))
+    p("  cross-play, same config      " + stats([r for r in both if r["kind"] == "same_config"]))
+    p("  cross-play, different config " + stats([r for r in both if r["kind"] == "cross_config"]))
+    p("  cross-play, all              " + stats([r for r in both if r["kind"] != "self"]))
+
+    p("\nCROSS-PLAY BY ROLE (cooperative source runs, i != j)   A role x B role")
+    for ra in ("walker", "waiter"):
+        for rb in ("walker", "waiter"):
+            p(f"  A {ra:6s} + B {rb:6s}         " + stats([r for r in both if r["kind"] != "self"
+                                                          and r["A_role"] == ra and r["B_role"] == rb]))
+
+    p("\nCROSS-PLAY BY TRAINING METHOD (cooperative source runs, i != j)   rows: A's method, cols: B's method, mean catches")
+    meths = sorted({method_of(names[i]) for i in selfp if coop_run[i]})
+    p("  " + " " * 14 + "".join(f"{m[:9]:>10s}" for m in meths))
+    for ma in meths:
+        cells = []
+        for mb in meths:
+            sel = [r["catches"] for r in both
+                   if r["kind"] != "self" and method_of(r["A_from"]) == ma and method_of(r["B_from"]) == mb]
+            cells.append(f"{np.mean(sel):10.1f}" if sel else f"{'-':>10s}")
+        p(f"  {ma[:14]:14s}" + "".join(cells))
+
+    idx = [i for i in range(n_runs) if coop_run.get(i)]
+    if idx:
+        p("\nCATCH MATRIX (cooperative runs only): row = run providing agent A, column = run providing agent B")
+        p("diagonal = self-play\n")
+        p("      " + "".join(f"{'r'+str(k+1):>6s}" for k in range(len(idx))))
+        for k, i in enumerate(idx):
+            p(f"{'r'+str(k+1):>6s}" + "".join(
+                (f"{cell[(i, j)]:5.1f}*" if i == j else f"{cell[(i, j)]:6.1f}") if (i, j) in cell else f"{'-':>6s}"
+                for j in idx))
+        p("\nlegend (self-play catches, role of A / role of B):")
+        for k, i in enumerate(idx):
+            p(f"  r{k+1:<3d} {short(names[i]):24s} {selfp[i]['catches']:5.1f}   A {role_A[i]:6s}  B {role_B[i]}")
+
+    text = out.getvalue()
+    print("\n" + text)
+    with open(os.path.join(out_dir, "crossplay_summary.txt"), "w") as f:
+        f.write(text)
+    print(f"saved {out_dir}/crossplay_summary.txt")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--runs", nargs="*", default=None, help="run folders (default: runs/*)")
@@ -143,8 +220,21 @@ def main():
     ap.add_argument("--seed", type=int, default=0, help="first episode seed")
     ap.add_argument("--jobs", type=int, default=os.cpu_count())
     ap.add_argument("--out", default="results")
+    ap.add_argument("--summary-only", action="store_true",
+                    help="no games: rebuild crossplay_summary.txt from the existing crossplay_pairs.csv in --out")
     args = ap.parse_args()
     sys.path.insert(0, os.getcwd())
+
+    if args.summary_only:
+        with open(os.path.join(args.out, "crossplay_pairs.csv")) as f:
+            rows = list(csv.DictReader(f))
+        for r in rows:
+            for k in ("A_selfplay_coop", "B_selfplay_coop"):
+                r[k] = r[k] == "True"
+            for k in ("catches", "maul", "forage", "meet", "meet_t", "coloc", "stand_A", "stand_B"):
+                r[k] = float(r[k])
+        write_summary(rows, args.out)
+        return
 
     cand = sorted(d.rstrip("/") for d in (args.runs or glob.glob("runs/*")) if os.path.exists(os.path.join(d, "model.pt")))
     if args.filter:
@@ -186,62 +276,8 @@ def main():
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader(); w.writerows(rows)
 
-    # ---------------- summary text
-    out = io.StringIO()
-    def p(*a): print(*a, file=out)
-
-    def stats(sel):
-        if not sel:
-            return "n=   0"
-        c = np.array([r["catches"] for r in sel])
-        return (f"n={len(sel):4d}  catches {c.mean():5.1f} ± {c.std():4.1f}   cooperative {100*np.mean(c > COOP):5.1f}%"
-                f"   meet {np.mean([r['meet'] for r in sel]):5.1f}%   maul {np.mean([r['maul'] for r in sel]):5.2f}"
-                f"   forage {np.mean([r['forage'] for r in sel]):5.1f}")
-
-    both = [r for r in rows if r["A_selfplay_coop"] and r["B_selfplay_coop"]]
-    p(f"CROSS-PLAY over pairs whose two source runs both cooperate in self-play "
-      f"({sum(coop_run.values())} of {len(runs)} runs cooperate)\n")
-    p("  self-play                    " + stats([r for r in both if r["kind"] == "self"]))
-    p("  cross-play, same config      " + stats([r for r in both if r["kind"] == "same_config"]))
-    p("  cross-play, different config " + stats([r for r in both if r["kind"] == "cross_config"]))
-    p("  cross-play, all              " + stats([r for r in both if r["kind"] != "self"]))
-
-    p("\nCROSS-PLAY BY ROLE (cooperative source runs, i != j)   A role x B role")
-    for ra in ("walker", "waiter"):
-        for rb in ("walker", "waiter"):
-            p(f"  A {ra:6s} + B {rb:6s}         " + stats([r for r in both if r["kind"] != "self"
-                                                          and r["A_role"] == ra and r["B_role"] == rb]))
-
-    p("\nCROSS-PLAY BY TRAINING METHOD (cooperative source runs, i != j)   rows: A's method, cols: B's method, mean catches")
-    meth = lambda n: re.sub(r"_a[\d.]+-[\d.]+_maul.*$", "", re.sub(r"^separate_", "", n)) or "dqn"
-    meths = sorted({meth(names[i]) for i in selfp if coop_run[i]})
-    p("  " + " " * 14 + "".join(f"{m[:9]:>10s}" for m in meths))
-    for ma in meths:
-        cells = []
-        for mb in meths:
-            sel = [r["catches"] for r in both if r["kind"] != "self" and meth(r["A_from"]) == ma and meth(r["B_from"]) == mb]
-            cells.append(f"{np.mean(sel):10.1f}" if sel else f"{'-':>10s}")
-        p(f"  {ma[:14]:14s}" + "".join(cells))
-
-    idx = [i for i in range(len(runs)) if coop_run[i]]
-    if idx:
-        p("\nCATCH MATRIX (cooperative runs only): row = run providing agent A, column = run providing agent B")
-        p("diagonal = self-play\n")
-        p("      " + "".join(f"{'r'+str(k+1):>6s}" for k in range(len(idx))))
-        cell = {(r["i"], r["j"]): r["catches"] for r in res}
-        for k, i in enumerate(idx):
-            p(f"{'r'+str(k+1):>6s}" + "".join(
-                (f"{cell[(i, j)]:5.1f}*" if i == j else f"{cell[(i, j)]:6.1f}") if (i, j) in cell else f"{'-':>6s}"
-                for j in idx))
-        p("\nlegend (self-play catches, role of A / role of B):")
-        for k, i in enumerate(idx):
-            p(f"  r{k+1:<3d} {short(names[i]):24s} {selfp[i]['catches']:5.1f}   A {role_A[i]:6s}  B {role_B[i]}")
-
-    text = out.getvalue()
-    print("\n" + text)
-    with open(os.path.join(args.out, "crossplay_summary.txt"), "w") as f:
-        f.write(text)
-    print(f"saved {args.out}/crossplay_pairs.csv and {args.out}/crossplay_summary.txt")
+    write_summary(rows, args.out)
+    print(f"saved {args.out}/crossplay_pairs.csv")
 
 
 if __name__ == "__main__":

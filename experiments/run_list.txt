@@ -259,3 +259,9 @@ python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10001
 python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10002 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
 python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10003 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
 python train.py --mode shared --alpha 0.0 --mauling-punishment -5.0 --seed 10004 --out runs --hyst-beta 0.2 --no-stag-follows --eps-frac 0.25
+python train.py --mode shared --alpha 0.0 --mauling-punishment -1.0 --seed 10000 --out runs
+python train.py --mode shared --alpha 0.0 --mauling-punishment -1.0 --seed 10001 --out runs
+python train.py --mode shared --alpha 0.0 --mauling-punishment -1.0 --seed 10002 --out runs
+python train.py --mode shared --alpha 0.5 --mauling-punishment -1.0 --seed 10000 --out runs
+python train.py --mode shared --alpha 0.5 --mauling-punishment -1.0 --seed 10001 --out runs
+python train.py --mode shared --alpha 0.5 --mauling-punishment -1.0 --seed 10002 --out runs
